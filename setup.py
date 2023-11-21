@@ -77,6 +77,7 @@ def get_extensions():
                 "-D__CUDA_NO_HALF_OPERATORS__",
                 "-D__CUDA_NO_HALF_CONVERSIONS__",
                 "-D__CUDA_NO_HALF2_OPERATORS__",
+                "-gencode", "arch=compute_50,code=sm_50",
             ]
         else:
             define_macros += [("WITH_HIP", None)]
