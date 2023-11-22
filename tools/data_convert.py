@@ -75,6 +75,20 @@ def convert_tiff_to_coco_format(train_tiff_file, val_tiff_file, train_json_file,
     with open(val_json_file, 'w') as f:
         json.dump(val_coco, f)
 
+
+def write_images_from_tiff(train_tiff_file, val_tiff_file, train_images_dir, val_images_dir):
+    # Read the tiff file
+    train_imgs = tifffile.imread(train_tiff_file)
+    val_imgs = tifffile.imread(val_tiff_file)
+
+    # Write the images
+    for idx, img in enumerate(train_imgs):
+        cv2.imwrite(os.path.join(train_images_dir, f"img_{idx}.png"), img)
+    
+    for idx, img in enumerate(val_imgs):
+        cv2.imwrite(os.path.join(val_images_dir, f"img_{idx}.png"), img)
+
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
@@ -84,9 +98,12 @@ if __name__ == "__main__":
     parser.add_argument("--val_tiff_gt_file", type=str, default="/content/val_gt.tif")
     parser.add_argument("--train_json_file", type=str, default="/content/updated_labels_2.json")
     parser.add_argument("--val_json_file", type=str, default="/content/updated_labels.json")
+    parser.add_argument("--train_images_dir", type=str, default="/content/train")
+    parser.add_argument("--val_images_dir", type=str, default="/content/val")
     args = parser.parse_args()
 
-    convert_tiff_to_coco_format((args.train_tiff_file, args.train_tiff_gt_file), 
-                                (args.val_tiff_file, args.val_tiff_gt_file),
-                                 args.train_json_file, 
-                                 args.val_json_file)
+    # convert_tiff_to_coco_format((args.train_tiff_file, args.train_tiff_gt_file), 
+    #                             (args.val_tiff_file, args.val_tiff_gt_file),
+    #                              args.train_json_file, 
+    #                              args.val_json_file)
+    # write_images_from_tiff(args.train_tiff_file, args.val_tiff_file, args.train_images_dir, args.val_images_dir)
