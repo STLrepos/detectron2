@@ -16,7 +16,10 @@ from detectron2.utils.visualizer import Visualizer
 from detectron2.data import MetadataCatalog, DatasetCatalog
 from detectron2.structures import BoxMode
 
+from pycocotools import mask as mask_util
+
 import tifffile
+import base64
 
 cfg = None
 
@@ -42,11 +45,14 @@ def convert_to_coco_format(imgs, lbs):
             
             x_min, y_min = np.min(bbox[1]), np.min(bbox[0])
             x_max, y_max = np.max(bbox[1]), np.max(bbox[0])
+
+            rle_bytes = mask_util.encode(np.array(mask[:, :, np.newaxis], order="F"))[0]
+            rle_str = base64.b64encode(rle_bytes['counts']).decode("utf-8")
             
             obj = {
                 "bbox": [int(x_min), int(y_min), int(x_max - x_min), int(y_max - y_min)],
                 "bbox_mode": BoxMode.XYWH_ABS,
-                "segmentation": mask.astype(int).tolist(),  # convert to RLE or polygon format for better performance
+                "segmentation": rle_str,  # convert to RLE or polygon format for better performance
                 "category_id": int(lb_idx),  # replace with actual category id if available
             }
             objs.append(obj)
@@ -131,10 +137,13 @@ def convert_jb_to_coco_json(image_folder, masks_folder, coco_json_file):
             bbox = np.where(mask_)
             x_min, y_min = np.min(bbox[1]), np.min(bbox[0])
             x_max, y_max = np.max(bbox[1]), np.max(bbox[0])
+
+            rle_bytes = mask_util.encode(np.array(mask_[:, :, np.newaxis], order="F"))[0]
+            rle_str = base64.b64encode(rle_bytes['counts']).decode("utf-8")
             obj = {
                 "bbox": [int(x_min), int(y_min), int(x_max - x_min), int(y_max - y_min)],
                 "bbox_mode": BoxMode.XYWH_ABS,
-                "segmentation": mask_.astype(int).tolist(),
+                "segmentation": rle_str,
                 "category_id": int(lb_idx),
             }
             objs.append(obj)
@@ -168,10 +177,10 @@ if __name__ == "__main__":
     parser.add_argument("--jb_masks_folder", type=str, default="/content/jb/masks")
     args = parser.parse_args()
 
-    # convert_tiff_to_coco_format((args.train_tiff_file, args.train_tiff_gt_file), 
-    #                             (args.val_tiff_file, args.val_tiff_gt_file),
-    #                              args.train_json_file, 
-    #                              args.val_json_file)
+    convert_tiff_to_coco_format((args.train_tiff_file, args.train_tiff_gt_file), 
+                                (args.val_tiff_file, args.val_tiff_gt_file),
+                                 args.train_json_file, 
+                                 args.val_json_file)
     # write_images_from_tiff(args.train_tiff_file, args.val_tiff_file, args.train_images_dir, args.val_images_dir)
 
-    convert_jb_to_coco_json(args.jb_image_folder, args.jb_masks_folder, args.train_json_file)
+    # convert_jb_to_coco_json(args.jb_image_folder, args.jb_masks_folder, args.train_json_file)
