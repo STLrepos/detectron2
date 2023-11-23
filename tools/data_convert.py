@@ -89,9 +89,71 @@ def write_images_from_tiff(train_tiff_file, val_tiff_file, train_images_dir, val
         cv2.imwrite(os.path.join(val_images_dir, f"img_{idx}.png"), img)
 
 
+def convert_jb_to_coco_json(image_folder, masks_folder, coco_json_file):
+    
+    import glob
+    coco_json = {}
+    coco_json['images'] = []
+    coco_json['annotations'] = []
+    coco_json['categories'] = []
+    for gl in glob.glob(os.path.join(image_folder, "*.jpg")):
+        # get the name somename.input.jpg
+        name = os.path.basename(gl)
+        # remove the .input.jpg
+        name = name[:-10]
+        
+        # get the mask file in format somename.output.jpg
+        mask_file = os.path.join(masks_folder, name + ".output.jpg")
+
+        # read the mask file
+        mask = cv2.imread(mask_file, cv2.IMREAD_GRAYSCALE)
+        if mask is None:
+            print('mask is None. file:', mask_file)
+            continue
+
+        # convert to binary
+        mask = (mask > 0).astype(np.uint8)
+
+        # coco annotation format
+        record = {}
+        record["file_name"] = name + ".input.jpg"
+        record["image_id"] = name
+        record["height"] = mask.shape[0]
+        record["width"] = mask.shape[1]
+        coco_json['images'].append(record)
+        
+        # get the mask
+        objs = []
+        for lb_idx in np.unique(mask):
+            if lb_idx == 0:
+                continue
+            mask_ = (mask == lb_idx)
+            bbox = np.where(mask_)
+            x_min, y_min = np.min(bbox[1]), np.min(bbox[0])
+            x_max, y_max = np.max(bbox[1]), np.max(bbox[0])
+            obj = {
+                "bbox": [int(x_min), int(y_min), int(x_max - x_min), int(y_max - y_min)],
+                "bbox_mode": BoxMode.XYWH_ABS,
+                "segmentation": mask_.astype(int).tolist(),
+                "category_id": int(lb_idx),
+            }
+            objs.append(obj)
+        coco_json['annotations'].extend(objs)
+
+    # add the categories
+    coco_json['categories'].append({'id': 0, 'name': 'bg', 'supercategory': 'background'})
+    coco_json['categories'].append({'id': 1, 'name': 'fg', 'supercategory': 'foreground'})
+
+    # save the json file
+    with open(coco_json_file, 'w') as f:
+        json.dump(coco_json, f)
+
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
+
+    # cell dataset
     parser.add_argument("--train_tiff_file", type=str, default="/content/train.tif")
     parser.add_argument("--train_tiff_gt_file", type=str, default="/content/train_gt.tif")
     parser.add_argument("--val_tiff_file", type=str, default="/content/val.tif")
@@ -100,6 +162,10 @@ if __name__ == "__main__":
     parser.add_argument("--val_json_file", type=str, default="/content/updated_labels.json")
     parser.add_argument("--train_images_dir", type=str, default="/content/train")
     parser.add_argument("--val_images_dir", type=str, default="/content/val")
+
+    # jb dataset
+    parser.add_argument("--jb_image_folder", type=str, default="/content/jb/images")
+    parser.add_argument("--jb_masks_folder", type=str, default="/content/jb/masks")
     args = parser.parse_args()
 
     # convert_tiff_to_coco_format((args.train_tiff_file, args.train_tiff_gt_file), 
@@ -107,3 +173,5 @@ if __name__ == "__main__":
     #                              args.train_json_file, 
     #                              args.val_json_file)
     # write_images_from_tiff(args.train_tiff_file, args.val_tiff_file, args.train_images_dir, args.val_images_dir)
+
+    convert_jb_to_coco_json(args.jb_image_folder, args.jb_masks_folder, args.train_json_file)
