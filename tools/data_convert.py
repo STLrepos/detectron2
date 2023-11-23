@@ -24,16 +24,20 @@ import base64
 cfg = None
 
 def convert_to_coco_format(imgs, lbs):
+    coco_json = {}
+    coco_json['images'] = []
+    coco_json['annotations'] = []
+    coco_json['categories'] = []
+
     dataset_dicts = []
     for idx, (img, lb) in enumerate(zip(imgs, lbs)):
         record = {}
-        
-        height, width = img.shape[:2]
-        
-        record["file_name"] = f"img_{idx}.png"  # replace with actual file name if available
+        record["file_name"] = f"img_{idx}.png"
         record["image_id"] = idx
-        record["height"] = height
-        record["width"] = width
+        record["height"] = img.shape[0]
+        record["width"] = img.shape[1]
+        coco_json['images'].append(record)
+
         
         objs = []
         for lb_idx in np.unique(lb):
