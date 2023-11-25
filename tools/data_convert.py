@@ -23,8 +23,28 @@ import base64
 
 cfg = None
 
+
+def get_bboxs(mask):
+    mask = mask.astype(np.uint8)
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    bboxs = []
+    for contour in contours:
+        x, y, w, h = cv2.boundingRect(contour)
+        bboxs.append([x, y, w, h])
+
+    return bboxs
+
 def convert_to_coco_format(imgs, lbs):
     coco_json = {}
+    coco_json['info'] = {
+                          "description": "COCO 2017 Dataset",
+                          "url": "http://cocodataset.org",
+                          "version": "1.0",
+                          "year": 2017,
+                          "contributor": "COCO Consortium",
+                          "date_created": "2017/09/01"
+                        }
+    coco_json['licenses'] = []
     coco_json['images'] = []
     coco_json['annotations'] = []
     coco_json['categories'] = []
@@ -37,51 +57,50 @@ def convert_to_coco_format(imgs, lbs):
         record["height"] = img.shape[0]
         record["width"] = img.shape[1]
         coco_json['images'].append(record)
+        record["annotations"] = []
 
-        
         objs = []
         for lb_idx in np.unique(lb):
             if lb_idx == 0:  # typically, 0 is the background
                 continue
-            
-            mask = (lb == lb_idx)
-            bbox = np.where(mask)
-            
-            x_min, y_min = np.min(bbox[1]), np.min(bbox[0])
-            x_max, y_max = np.max(bbox[1]), np.max(bbox[0])
 
-            rle_bytes = mask_util.encode(np.array(mask[:, :, np.newaxis], order="F"))[0]
-            rle_str = base64.b64encode(rle_bytes['counts']).decode("utf-8")
-            
-            obj = {
-                "bbox": [int(x_min), int(y_min), int(x_max - x_min), int(y_max - y_min)],
-                "bbox_mode": BoxMode.XYWH_ABS,
-                "segmentation": rle_str,  # convert to RLE or polygon format for better performance
-                "category_id": int(lb_idx),  # replace with actual category id if available
-            }
-            objs.append(obj)
-        
-        record["annotations"] = objs
+            mask = (lb == lb_idx)
+            mask_img = np.where(lb, 1, 0)
+            bboxs = get_bboxs(mask_img)
+            for bbox in bboxs:
+              x, y, w, h = bbox
+              rle_bytes = mask_util.encode(np.array(mask[:, :, np.newaxis], order="F"))[0]
+              rle_str = base64.b64encode(rle_bytes['counts']).decode("utf-8")
+
+              obj = {
+                  "bbox": [x, y, w, h],
+                  "bbox_mode": BoxMode.XYWH_ABS,
+                  "segmentation": rle_str,  # convert to RLE or polygon format for better performance
+                  "category_id": int(lb_idx),  # replace with actual category id if available
+              }
+              record["annotations"].append(obj)
         dataset_dicts.append(record)
-    
+
     return dataset_dicts
 
 
-def convert_tiff_to_coco_format(train_tiff_file, val_tiff_file, train_json_file, val_json_file):
+def convert_tiff_to_coco_format(train_tiff_file,
+                                val_tiff_file,
+                                train_json_file, val_json_file):
     # Read the tiff file
     train_imgs, train_lbs = tifffile.imread(train_tiff_file[0]), tifffile.imread(train_tiff_file[1])
     val_imgs, val_lbs = tifffile.imread(val_tiff_file[0]), tifffile.imread(val_tiff_file[1])
-
     # Convert the labels to COCO format
     train_coco = convert_to_coco_format(train_imgs, train_lbs)
     val_coco = convert_to_coco_format(val_imgs, val_lbs)
-
     # Save the COCO format labels
     print('train_coco segment data type:', type(train_coco[0]['annotations'][0]['segmentation'][0][0]))
     print('type of annotated boxes:', type(train_coco[0]['annotations'][0]['bbox'][0]))
+    print('train_coco segment data type:', type(val_coco[0]['annotations'][0]['segmentation'][0][0]))
+    print('type of annotated boxes:', type(val_coco[0]['annotations'][0]['bbox'][0]))
     with open(train_json_file, 'w') as f:
         json.dump(train_coco, f)
-    
+
     with open(val_json_file, 'w') as f:
         json.dump(val_coco, f)
 
