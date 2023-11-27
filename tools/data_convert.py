@@ -29,42 +29,55 @@ def convert_to_coco_format(imgs, lbs):
     coco_json['annotations'] = []
     coco_json['categories'] = []
 
-    dataset_dicts = []
+    cats = []
     for idx, (img, lb) in enumerate(zip(imgs, lbs)):
         record = {}
         record["file_name"] = f"img_{idx}.png"
-        record["image_id"] = idx
+        record["id"] = idx
         record["height"] = img.shape[0]
         record["width"] = img.shape[1]
         coco_json['images'].append(record)
 
-        
-        objs = []
+        annots = []
+        ann_id = 0
         for lb_idx in np.unique(lb):
+            cats.append(lb_idx)
             if lb_idx == 0:  # typically, 0 is the background
                 continue
             
-            mask = (lb == lb_idx)
-            bbox = np.where(mask)
-            
-            x_min, y_min = np.min(bbox[1]), np.min(bbox[0])
-            x_max, y_max = np.max(bbox[1]), np.max(bbox[0])
+            mask = (lb == lb_idx).astype(np.uint8)
+            contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-            rle_bytes = mask_util.encode(np.array(mask[:, :, np.newaxis], order="F"))[0]
-            rle_str = base64.b64encode(rle_bytes['counts']).decode("utf-8")
-            
-            obj = {
-                "bbox": [int(x_min), int(y_min), int(x_max - x_min), int(y_max - y_min)],
-                "bbox_mode": BoxMode.XYWH_ABS,
-                "segmentation": rle_str,  # convert to RLE or polygon format for better performance
-                "category_id": int(lb_idx),  # replace with actual category id if available
-            }
-            objs.append(obj)
-        
-        record["annotations"] = objs
-        dataset_dicts.append(record)
-    
-    return dataset_dicts
+            for contour in contours:
+                # Create mask for current contour
+                contour_mask = np.zeros((img.shape[0], img.shape[1]), dtype=np.uint8)
+                cv2.drawContours(contour_mask, [contour], -1, color=1, thickness=cv2.FILLED)
+
+                # Encode mask using RLE
+                encoded_mask = mask_util.encode(np.asfortranarray(contour_mask))
+                rle_str = base64.b64encode(encoded_mask['counts']).decode("utf-8")
+
+                # Calculate bounding box from contour
+                x, y, w, h = cv2.boundingRect(contour)
+
+                # Create annotation dictionary
+                ann_id += 1
+                annot = {
+                    "bbox": [int(x), int(y), int(w), int(h)],
+                    "bbox_mode": "BoxMode.XYWH_ABS",
+                    "segmentation": rle_str,
+                    "category_id": int(lb_idx), 
+                    "image_id": idx,
+                    "id": ann_id
+                }
+                annots.append(annot)
+        coco_json['annotations'].extend(annots)
+    print('np.unique(cats):', np.unique(cats))
+    for cat in np.unique(cats):
+        if cat == 0:
+            continue
+        coco_json['categories'].append({'id': int(cat), 'name': f"cat_{cat}", 'supercategory': 'cat'})
+    return coco_json
 
 
 def convert_tiff_to_coco_format(train_tiff_file, val_tiff_file, train_json_file, val_json_file):
@@ -77,8 +90,6 @@ def convert_tiff_to_coco_format(train_tiff_file, val_tiff_file, train_json_file,
     val_coco = convert_to_coco_format(val_imgs, val_lbs)
 
     # Save the COCO format labels
-    print('train_coco segment data type:', type(train_coco[0]['annotations'][0]['segmentation'][0][0]))
-    print('type of annotated boxes:', type(train_coco[0]['annotations'][0]['bbox'][0]))
     with open(train_json_file, 'w') as f:
         json.dump(train_coco, f)
     
@@ -106,6 +117,9 @@ def convert_jb_to_coco_json(image_folder, masks_folder, coco_json_file):
     coco_json['images'] = []
     coco_json['annotations'] = []
     coco_json['categories'] = []
+
+    ann_id = 0
+    imid = 0
     for gl in glob.glob(os.path.join(image_folder, "*.jpg")):
         # get the name somename.input.jpg
         name = os.path.basename(gl)
@@ -125,9 +139,10 @@ def convert_jb_to_coco_json(image_folder, masks_folder, coco_json_file):
         mask = (mask > 0).astype(np.uint8)
 
         # coco annotation format
+        imid += 1
         record = {}
         record["file_name"] = name + ".input.jpg"
-        record["image_id"] = name
+        record["id"] = imid
         record["height"] = mask.shape[0]
         record["width"] = mask.shape[1]
         coco_json['images'].append(record)
@@ -137,20 +152,32 @@ def convert_jb_to_coco_json(image_folder, masks_folder, coco_json_file):
         for lb_idx in np.unique(mask):
             if lb_idx == 0:
                 continue
-            mask_ = (mask == lb_idx)
-            bbox = np.where(mask_)
-            x_min, y_min = np.min(bbox[1]), np.min(bbox[0])
-            x_max, y_max = np.max(bbox[1]), np.max(bbox[0])
+            mask_ = (mask == lb_idx).astype(np.uint8)
+            contours, _ = cv2.findContours(mask_, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-            rle_bytes = mask_util.encode(np.array(mask_[:, :, np.newaxis], order="F"))[0]
-            rle_str = base64.b64encode(rle_bytes['counts']).decode("utf-8")
-            obj = {
-                "bbox": [int(x_min), int(y_min), int(x_max - x_min), int(y_max - y_min)],
-                "bbox_mode": BoxMode.XYWH_ABS,
-                "segmentation": rle_str,
-                "category_id": int(lb_idx),
-            }
-            objs.append(obj)
+            for contour in contours:
+                # Create mask for current contour
+                contour_mask = np.zeros((mask.shape[0], mask.shape[1]), dtype=np.uint8)
+                cv2.drawContours(contour_mask, [contour], -1, color=1, thickness=cv2.FILLED)
+
+                # Encode mask using RLE
+                encoded_mask = mask_util.encode(np.asfortranarray(contour_mask))
+                rle_str = base64.b64encode(encoded_mask['counts']).decode("utf-8")
+
+                # Calculate bounding box from contour
+                x, y, w, h = cv2.boundingRect(contour)
+
+                # Create annotation dictionary
+                ann_id += 1
+                obj = {
+                    "bbox": [int(x), int(y), int(w), int(h)],
+                    "bbox_mode": "BoxMode.XYWH_ABS",
+                    "segmentation": rle_str,
+                    "category_id": int(lb_idx),
+                    "image_id": imid,
+                    "id": ann_id
+                }
+                objs.append(obj)
         coco_json['annotations'].extend(objs)
 
     # add the categories
@@ -181,10 +208,10 @@ if __name__ == "__main__":
     parser.add_argument("--jb_masks_folder", type=str, default="/content/jb/masks")
     args = parser.parse_args()
 
-    convert_tiff_to_coco_format((args.train_tiff_file, args.train_tiff_gt_file), 
-                                (args.val_tiff_file, args.val_tiff_gt_file),
-                                 args.train_json_file, 
-                                 args.val_json_file)
+    # convert_tiff_to_coco_format((args.train_tiff_file, args.train_tiff_gt_file), 
+    #                             (args.val_tiff_file, args.val_tiff_gt_file),
+    #                              args.train_json_file, 
+    #                              args.val_json_file)
     # write_images_from_tiff(args.train_tiff_file, args.val_tiff_file, args.train_images_dir, args.val_images_dir)
 
-    # convert_jb_to_coco_json(args.jb_image_folder, args.jb_masks_folder, args.train_json_file)
+    convert_jb_to_coco_json(args.jb_image_folder, args.jb_masks_folder, args.train_json_file)
