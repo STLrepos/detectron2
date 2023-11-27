@@ -24,65 +24,57 @@ import base64
 cfg = None
 
 
-def get_bboxs(mask):
-    mask = mask.astype(np.uint8)
+def get_masks(mask):
+    mask = mask.astype(np.uint8) 
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    bboxs = []
-    for contour in contours:
-        x, y, w, h = cv2.boundingRect(contour)
-        bboxs.append([x, y, w, h])
+    
+    bboxes = []
+    segmentations = []
+    for c in contours:
+        x, y, w, h = cv2.boundingRect(c)
+        bboxes.append([x, y, w, h])
+        segmentation =c.flatten().tolist()
+   
+        segmentations.append(segmentation)
+        
+    return bboxes, segmentations
 
-    return bboxs
-
-def convert_to_coco_format(imgs, lbs):
-    coco_json = {}
-    coco_json['info'] = {
-                          "description": "COCO 2017 Dataset",
-                          "url": "http://cocodataset.org",
-                          "version": "1.0",
-                          "year": 2017,
-                          "contributor": "COCO Consortium",
-                          "date_created": "2017/09/01"
-                        }
-    coco_json['licenses'] = []
-    coco_json['images'] = []
-    coco_json['annotations'] = []
-    coco_json['categories'] = []
-
-    dataset_dicts = []
-    for idx, (img, lb) in enumerate(zip(imgs, lbs)):
-        record = {}
-        record["file_name"] = f"img_{idx}.png"
-        record["image_id"] = idx
-        record["height"] = img.shape[0]
-        record["width"] = img.shape[1]
-        coco_json['images'].append(record)
-        record["annotations"] = []
-
-        objs = []
-        for lb_idx in np.unique(lb):
-            if lb_idx == 0:  # typically, 0 is the background
-                continue
-
-            mask = (lb == lb_idx)
-            mask_img = np.where(lb, 1, 0)
-            bboxs = get_bboxs(mask_img)
-            for bbox in bboxs:
-              x, y, w, h = bbox
-              rle_bytes = mask_util.encode(np.array(mask[:, :, np.newaxis], order="F"))[0]
-              rle_str = base64.b64encode(rle_bytes['counts']).decode("utf-8")
-
-              obj = {
-                  "bbox": [x, y, w, h],
-                  "bbox_mode": BoxMode.XYWH_ABS,
-                  "segmentation": rle_str,  # convert to RLE or polygon format for better performance
-                  "category_id": int(lb_idx),  # replace with actual category id if available
-              }
-              record["annotations"].append(obj)
-        dataset_dicts.append(record)
-
-    return dataset_dicts
-
+def convert_to_coco(imgs, masks):
+    coco_format = {
+        "info": {},
+        "images": [],
+        "annotations": [],
+        "categories": [{"id": 1, "name": "cell"}] 
+    }
+    image_id = 0
+    ann_id = 0
+    
+    for img, mask in zip(imgs, masks):
+        bboxes, segmentations = get_masks(mask)
+        
+        image = {
+            "id": image_id,
+            "width": img.shape[1],
+            "height": img.shape[0],
+            "file_name": f"image{image_id}.jpg"
+        }
+        coco_format["images"].append(image)
+    
+        for bbox, segmentation in zip(bboxes, segmentations):
+            annotation = {
+                "id": ann_id,
+                "image_id": image_id,
+                "category_id": 1, 
+                "bbox": bbox,
+                "segmentation": [segmentation],
+                "area": bbox[2] * bbox[3]
+            }    
+            coco_format["annotations"].append(annotation)
+            
+            ann_id += 1     
+        image_id += 1
+        
+    return coco_format
 
 def convert_tiff_to_coco_format(train_tiff_file,
                                 val_tiff_file,
@@ -91,19 +83,13 @@ def convert_tiff_to_coco_format(train_tiff_file,
     train_imgs, train_lbs = tifffile.imread(train_tiff_file[0]), tifffile.imread(train_tiff_file[1])
     val_imgs, val_lbs = tifffile.imread(val_tiff_file[0]), tifffile.imread(val_tiff_file[1])
     # Convert the labels to COCO format
-    train_coco = convert_to_coco_format(train_imgs, train_lbs)
-    val_coco = convert_to_coco_format(val_imgs, val_lbs)
-    # Save the COCO format labels
-    print('train_coco segment data type:', type(train_coco[0]['annotations'][0]['segmentation'][0][0]))
-    print('type of annotated boxes:', type(train_coco[0]['annotations'][0]['bbox'][0]))
-    print('train_coco segment data type:', type(val_coco[0]['annotations'][0]['segmentation'][0][0]))
-    print('type of annotated boxes:', type(val_coco[0]['annotations'][0]['bbox'][0]))
+    train_coco = convert_to_coco(train_imgs, train_lbs)
+    val_coco = convert_to_coco(val_imgs, val_lbs)
     with open(train_json_file, 'w') as f:
         json.dump(train_coco, f)
 
     with open(val_json_file, 'w') as f:
         json.dump(val_coco, f)
-
 
 def write_images_from_tiff(train_tiff_file, val_tiff_file, train_images_dir, val_images_dir):
     # Read the tiff file
@@ -112,10 +98,9 @@ def write_images_from_tiff(train_tiff_file, val_tiff_file, train_images_dir, val
 
     # Write the images
     for idx, img in enumerate(train_imgs):
-        cv2.imwrite(os.path.join(train_images_dir, f"img_{idx}.png"), img)
-    
+        cv2.imwrite(os.path.join(train_images_dir, f"image{idx}.jpg"), img)
     for idx, img in enumerate(val_imgs):
-        cv2.imwrite(os.path.join(val_images_dir, f"img_{idx}.png"), img)
+        cv2.imwrite(os.path.join(val_images_dir, f"image{idx}.jpg"), img)
 
 
 def convert_jb_to_coco_json(image_folder, masks_folder, coco_json_file):
