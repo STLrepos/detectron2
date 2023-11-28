@@ -30,6 +30,7 @@ def convert_to_coco_format(imgs, lbs):
     coco_json['categories'] = []
 
     cats = []
+    ann_id = 0
     for idx, (img, lb) in enumerate(zip(imgs, lbs)):
         record = {}
         record["file_name"] = f"img_{idx}.png"
@@ -39,7 +40,7 @@ def convert_to_coco_format(imgs, lbs):
         coco_json['images'].append(record)
 
         annots = []
-        ann_id = 0
+        
         for lb_idx in np.unique(lb):
             cats.append(lb_idx)
             if lb_idx == 0:  # typically, 0 is the background
