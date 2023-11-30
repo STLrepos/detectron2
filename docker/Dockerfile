@@ -20,6 +20,7 @@ ARG TORCH_CUDA_ARCH_LIST="Maxwell;Maxwell+Tegra;Pascal;Volta;Turing"
 ENV TORCH_CUDA_ARCH_LIST="${TORCH_CUDA_ARCH_LIST}"
 
 RUN pip install --user -e src
+RUN pip install tifffile
 
 # Set a fixed model cache directory.
 ENV FVCORE_CACHE="/tmp"
