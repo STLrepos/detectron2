@@ -22,6 +22,8 @@ from detectron2.config import get_cfg
 from detectron2.utils.visualizer import Visualizer
 from detectron2.data import MetadataCatalog, DatasetCatalog
 from detectron2.structures import BoxMode
+from detectron2.data import build_detection_test_loader
+from detectron2.data.datasets import register_coco_instances
 from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 
 
@@ -95,24 +97,11 @@ def test(cfg):
 
 
 def evaluate():
-    val_dataset_dicts = DatasetCatalog.get("my_dataset_val_1")
-    val_metadata = MetadataCatalog.get("my_dataset_val_1")
+    evaluator = COCOEvaluator("my_dataset_val_1", cfg, False, output_dir="./output/")
+    val_loader = build_detection_test_loader(cfg, "my_dataset_val_1")
 
-    predictions = inference_on_dataset(predictor, val_dataset_dicts)  
-
-    evaluator = COCOEvaluator("my_dataset_val", output_dir="./output")
-    evaluator.update(predictions) 
-    evaluator.synchronize_results()
-    evaluator.accumulate()
-    
-    box_ap_stats = evaluator.coco_eval["bbox"].stats
-    mask_ap_stats = evaluator.coco_eval["segm"].stats 
-
-    boxAP = box_ap_stats[0]    
-    maskAP = mask_ap_stats[0]
-
-    print(f"Box AP: {boxAP:.3f}")
-    print(f"Mask AP: {maskAP:.3f}")
+    #Use the created predicted model in the previous step
+    inference_on_dataset(predictor.model, val_loader, evaluator)
     
 if __name__ == "__main__":
     import argparse
