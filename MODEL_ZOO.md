@@ -456,6 +456,18 @@ All models available for download through this document are licensed under the
 <th valign="bottom">model id</th>
 <th valign="bottom">download</th>
 <!-- TABLE BODY -->
+
+<tr><td align="left"><a href="configs/COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_1x.yaml">R50-FPN</a></td>
+<td align="center">1x</td>
+<td align="center">0.261</td>
+<td align="center">0.0025</td>
+<td align="center">3.4</td>
+<td align="center">0.081</td>
+<td align="center">0.023</td>
+<td align="center">137849600</td>
+<td align="center"><a href="https://drive.google.com/file/d/1-1Dh-MHigWpI_dHOg_rJP131reUh0bRv/view?usp=drive_link">model</a>&nbsp;|&nbsp;<a href="https://drive.google.com/file/d/1-DUxj3o3ICG05X42PT_2HafP4WmoyZpx/view?usp=drive_link">metrics</a></td>
+</tr>
+
 <!-- ROW: mask_rcnn_R_50_FPN_3x -->
  <tr><td align="left"><a href="configs/COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml">R50-FPN</a></td>
 <td align="center">3x</td>

@@ -129,3 +129,4 @@ if __name__ == "__main__":
         args.path_config_file
     )
     # test()
+    evaluate()
