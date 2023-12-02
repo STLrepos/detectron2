@@ -63,10 +63,12 @@ def convert_to_coco_format(imgs, lbs):
                 # Create annotation dictionary
                 ann_id += 1
                 annot = {
+                    "iscrowd":0,
+                    'area': int(w) * int(h),
                     "bbox": [int(x), int(y), int(w), int(h)],
                     "bbox_mode": "BoxMode.XYWH_ABS",
                     "segmentation": encoded_mask,
-                    "category_id": int(lb_idx), 
+                    "category_id": int(lb_idx),
                     "image_id": idx,
                     "id": ann_id
                 }

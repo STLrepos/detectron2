@@ -436,6 +436,40 @@ All models available for download through this document are licensed under the
 </tbody></table>
 
 
+### Cell Instance Segmentation Baselines with Mask R-CNN
+<!--
+./gen_html_table.py --config 'COCO-InstanceSegmentation/mask*50*'{1x,3x}'*' 'COCO-InstanceSegmentation/mask*101*' --name R50-C4 R50-DC5 R50-FPN R50-C4 R50-DC5 R50-FPN R101-C4 R101-DC5 R101-FPN X101-FPN --fields lr_sched train_speed inference_speed mem box_AP mask_AP
+-->
+
+
+
+<table><tbody>
+<!-- START TABLE -->
+<!-- TABLE HEADER -->
+<th valign="bottom">Name</th>
+<th valign="bottom">lr<br/>sched</th>
+<th valign="bottom">train<br/>time<br/>(s/iter)</th>
+<th valign="bottom">inference<br/>time<br/>(s/im)</th>
+<th valign="bottom">train<br/>mem<br/>(GB)</th>
+<th valign="bottom">box<br/>AP</th>
+<th valign="bottom">mask<br/>AP</th>
+<th valign="bottom">model id</th>
+<th valign="bottom">download</th>
+<!-- TABLE BODY -->
+<!-- ROW: mask_rcnn_R_50_FPN_3x -->
+ <tr><td align="left"><a href="configs/COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml">R50-FPN</a></td>
+<td align="center">3x</td>
+<td align="center">0.261</td>
+<td align="center">0.043</td>
+<td align="center">3.4</td>
+<td align="center">69.191</td>
+<td align="center">70.613</td>
+<td align="center">137849600</td>
+<td align="center"><a href="https://drive.google.com/file/d/1-1Dh-MHigWpI_dHOg_rJP131reUh0bRv/view?usp=drive_link">model</a>&nbsp;|&nbsp;<a href="https://drive.google.com/file/d/1-DUxj3o3ICG05X42PT_2HafP4WmoyZpx/view?usp=drive_link">metrics</a></td>
+</tr>
+</tbody></table>
+
+
 
 #### New baselines using Large-Scale Jitter and Longer Training Schedule
 
