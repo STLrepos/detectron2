@@ -465,7 +465,7 @@ All models available for download through this document are licensed under the
 <td align="center">0.081</td>
 <td align="center">0.023</td>
 <td align="center">137849600</td>
-<td align="center"><a href="https://drive.google.com/file/d/1-1Dh-MHigWpI_dHOg_rJP131reUh0bRv/view?usp=drive_link">model</a>&nbsp;|&nbsp;<a href="https://drive.google.com/file/d/1-DUxj3o3ICG05X42PT_2HafP4WmoyZpx/view?usp=drive_link">metrics</a></td>
+<td align="center"><a href="https://drive.google.com/file/d/1-SSi5dTD1wZ_r1rtNV1MCEp-dsTBF27X/view?usp=drive_link">model</a>&nbsp;|&nbsp;<a href="https://drive.google.com/file/d/1-JM_j_wVMM16uZq5TIdTw3rZVLy4zhLI/view?usp=drive_link">metrics</a></td>
 </tr>
 
 <!-- ROW: mask_rcnn_R_50_FPN_3x -->
