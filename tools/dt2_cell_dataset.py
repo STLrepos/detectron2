@@ -47,9 +47,10 @@ def train(train_json_file, val_json_file, train_image_dir, val_image_dir):
     trainer = DefaultTrainer(cfg)
     trainer.resume_or_load(resume=False)
     trainer.train()
+    return cfg
 
 
-def test():
+def test(cfg):
     # Inference should use the config with parameters that are used in training
     # cfg now already contains everything we've set previously. We changed it a little bit for inference:
     cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
@@ -63,29 +64,33 @@ def test():
     from PIL import Image
     import numpy as np
     import io
+    import matplotlib.pyplot as plt
 
     val_dataset_dicts = DatasetCatalog.get("my_dataset_val_1")
     val_metadata = MetadataCatalog.get("my_dataset_val_1")
+    
 
-    # Path to the validation images
-    val_images_path = "/content/val"
+    for d in random.sample(val_dataset_dicts, 1):
 
-    # Iterate over the validation dataset
-    for d in val_dataset_dicts:
-        # Read the image
-        img_path = os.path.join(val_images_path, d["file_name"])
-        img = cv2.imread(img_path)
+        im = cv2.imread(d["file_name"])
+        outputs = predictor(im)
+        
+        v_gt = Visualizer(im[:, :, ::-1], metadata=val_metadata, scale=0.5)
+        out_gt = v_gt.draw_dataset_dict(d)
+        
+        v_pred = Visualizer(im[:, :, ::-1], metadata=val_metadata, scale=0.5) 
+        out_pred = v_pred.draw_instance_predictions(outputs["instances"].to("cpu"))
 
-        # Make prediction
-        outputs = predictor(img)
+        f, axarr = plt.subplots(2, 1, figsize=(10, 15))
+        
+        axarr[0].imshow(out_gt.get_image()[:, :, ::-1])
+        axarr[0].set_title('Ground Truth')
 
-        # Visualize the prediction
-        v = Visualizer(img[:, :, ::-1], metadata=val_metadata, scale=0.5, instance_mode=ColorMode.IMAGE_BW)
-        v = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-
-        # Convert image for display in Colab
-        pil_img = Image.fromarray(v.get_image()[:, :, ::-1])
-        display(pil_img)
+        axarr[1].imshow(out_pred.get_image()[:, :, ::-1])
+        axarr[1].set_title('Prediction')
+        
+        plt.tight_layout()
+        plt.show()
 
 
 if __name__ == "__main__":
