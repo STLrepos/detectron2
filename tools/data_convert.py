@@ -55,16 +55,18 @@ def convert_to_coco_format(imgs, lbs):
 
                 # Encode mask using RLE
                 encoded_mask = mask_util.encode(np.asfortranarray(contour_mask))
-                rle_str = base64.b64encode(encoded_mask['counts']).decode("utf-8")
+                encoded_mask['counts'] = encoded_mask['counts'].decode('utf-8')
+
+                # Calculate bounding box from contour
                 x, y, w, h = cv2.boundingRect(contour)
 
                 # Create annotation dictionary
                 ann_id += 1
                 annot = {
                     "bbox": [int(x), int(y), int(w), int(h)],
-                    "bbox_mode": 1,
-                    "segmentation": rle_str,
-                    "category_id": int(lb_idx),
+                    "bbox_mode": "BoxMode.XYWH_ABS",
+                    "segmentation": encoded_mask,
+                    "category_id": int(lb_idx), 
                     "image_id": idx,
                     "id": ann_id
                 }
@@ -160,7 +162,7 @@ def convert_jb_to_coco_json(image_folder, masks_folder, coco_json_file):
 
                 # Encode mask using RLE
                 encoded_mask = mask_util.encode(np.asfortranarray(contour_mask))
-                rle_str = base64.b64encode(encoded_mask['counts']).decode("utf-8")
+                encoded_mask['counts'] = encoded_mask['counts'].decode('utf-8')
 
                 # Calculate bounding box from contour
                 x, y, w, h = cv2.boundingRect(contour)
@@ -170,8 +172,8 @@ def convert_jb_to_coco_json(image_folder, masks_folder, coco_json_file):
                 obj = {
                     "iscrowd":0,
                     "bbox": [int(x), int(y), int(w), int(h)],
-                    "bbox_mode": 1,
-                    "segmentation": rle_str,
+                    "bbox_mode": "BoxMode.XYWH_ABS",
+                    "segmentation": encoded_mask,
                     "category_id": int(lb_idx),
                     "image_id": imid,
                     "id": ann_id
