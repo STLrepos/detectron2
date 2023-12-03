@@ -460,12 +460,12 @@ All models available for download through this document are licensed under the
 <tr><td align="left"><a href="configs/COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_1x.yaml">R50-FPN</a></td>
 <td align="center">1x</td>
 <td align="center">0.261</td>
-<td align="center">0.0025</td>
+<td align="center">0.0022</td>
 <td align="center">3.4</td>
-<td align="center">0.081</td>
-<td align="center">0.023</td>
+<td align="center">62.491</td>
+<td align="center">64.754</td>
 <td align="center">137849600</td>
-<td align="center"><a href="https://drive.google.com/file/d/1-SSi5dTD1wZ_r1rtNV1MCEp-dsTBF27X/view?usp=drive_link">model</a>&nbsp;|&nbsp;<a href="https://drive.google.com/file/d/1-JM_j_wVMM16uZq5TIdTw3rZVLy4zhLI/view?usp=drive_link">metrics</a></td>
+<td align="center"><a href="https://drive.google.com/file/d/1-PiWI9rzovvCECZkxBPdbDRQVOrEHsgL/view?usp=drive_link">model</a>&nbsp;|&nbsp;<a href="https://drive.google.com/file/d/1-OLXKJ6-XFtR6YWBLKa8Xu7DImBso9wR/view?usp=sharing">metrics</a></td>
 </tr>
 
 <!-- ROW: mask_rcnn_R_50_FPN_3x -->
@@ -478,6 +478,18 @@ All models available for download through this document are licensed under the
 <td align="center">70.613</td>
 <td align="center">137849600</td>
 <td align="center"><a href="https://drive.google.com/file/d/1-1Dh-MHigWpI_dHOg_rJP131reUh0bRv/view?usp=drive_link">model</a>&nbsp;|&nbsp;<a href="https://drive.google.com/file/d/1-DUxj3o3ICG05X42PT_2HafP4WmoyZpx/view?usp=drive_link">metrics</a></td>
+</tr>
+
+<!-- ROW: mask_rcnn_R_101_FPN_3x -->
+ <tr><td align="left"><a href="configs/COCO-InstanceSegmentation/mask_rcnn_R_101_FPN_3x.yaml">R101-FPN</a></td>
+<td align="center">3x</td>
+<td align="center">0.261</td>
+<td align="center">0.045</td>
+<td align="center">3.4</td>
+<td align="center">64.37</td>
+<td align="center">67.17</td>
+<td align="center">137849600</td>
+<td align="center"><a href="https://drive.google.com/file/d/1-7sD8pJN4jEtv7d_jJeffRMJdJRCUf5a/view?usp=drive_link">model</a>&nbsp;|&nbsp;<a href="https://drive.google.com/file/d/1-2pkWw4Y3YyAL3jU-nLC1oLkRn4U18nL/view?usp=drive_link">metrics</a></td>
 </tr>
 </tbody></table>
 
