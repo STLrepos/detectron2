@@ -59,15 +59,14 @@ def train(train_json_file, val_json_file, train_image_dir, val_image_dir, config
     trainer = DefaultTrainer(cfg)
     trainer.resume_or_load(resume=False)
     trainer.train()
-    return cfg
+    return cfg, trainer
 
 
-def test(cfg):
+def test(cfg, trainer):
     # Inference should use the config with parameters that are used in training
     # cfg now already contains everything we've set previously. We changed it a little bit for inference:
     cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7   # set a custom testing threshold
-    predictor = DefaultPredictor(cfg) 
 
     val_dataset_dicts = DatasetCatalog.get("my_dataset_val_1")
     val_metadata = MetadataCatalog.get("my_dataset_val_1")
@@ -76,7 +75,7 @@ def test(cfg):
     for d in random.sample(val_dataset_dicts, 1):
 
         im = cv2.imread(d["file_name"])
-        outputs = predictor(im)
+        outputs = trainer(im)
         
         v_gt = Visualizer(im[:, :, ::-1], metadata=val_metadata, scale=0.5)
         out_gt = v_gt.draw_dataset_dict(d)
@@ -96,12 +95,12 @@ def test(cfg):
         plt.show()
 
 
-def evaluate():
+def evaluate(trainer,cfg):
     evaluator = COCOEvaluator("my_dataset_val_1", cfg, False, output_dir="./output/")
     val_loader = build_detection_test_loader(cfg, "my_dataset_val_1")
 
     #Use the created predicted model in the previous step
-    inference_on_dataset(predictor.model, val_loader, evaluator)
+    inference_on_dataset(trainer.model, val_loader, evaluator)
     
 if __name__ == "__main__":
     import argparse
@@ -128,5 +127,3 @@ if __name__ == "__main__":
         args.val_image_dir,
         args.path_config_file
     )
-    # test()
-    evaluate()
