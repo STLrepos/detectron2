@@ -447,7 +447,7 @@ All models available for download through this document are licensed under the
 <!-- START TABLE -->
 <!-- TABLE HEADER -->
 <th valign="bottom">Name</th>
-<th valign="bottom">lr<br/>sched</th>
+<th valign="bottom">backdone<br/>sched</th>
 <th valign="bottom">train<br/>time<br/>(s/iter)</th>
 <th valign="bottom">inference<br/>time<br/>(s/im)</th>
 <th valign="bottom">train<br/>mem<br/>(GB)</th>
@@ -491,6 +491,52 @@ All models available for download through this document are licensed under the
 <td align="center">137849600</td>
 <td align="center"><a href="https://drive.google.com/file/d/1-9z_F9e8e9jWWlQGeFNFEJm0zR0dDqTy/view?usp=drive_link">model</a>&nbsp;|&nbsp;<a href="https://drive.google.com/file/d/1-6bbFLY6A_dfcDVwa681x9sycvNG2l7O/view?usp=drive_link">metrics</a></td>
 </tr>
+
+ <!-- <tr><td align="left"><a href="">YOLOV8</a></td>
+<td align="center">3x</td>
+<td align="center">0.34</td>
+<td align="center">0.145</td>
+<td align="center">5.2</td>
+<td align="center">66.80</td>
+<td align="center">67.84</td>
+<td align="center">137849600</td>
+<td align="center"><a href="https://drive.google.com/file/d/1-9z_F9e8e9jWWlQGeFNFEJm0zR0dDqTy/view?usp=drive_link">model</a>&nbsp;|&nbsp;<a href="https://drive.google.com/file/d/1-6bbFLY6A_dfcDVwa681x9sycvNG2l7O/view?usp=drive_link">metrics</a></td> -->
+<!-- </tr> -->
+</tbody></table>
+
+
+### Cell Instance Segmentation Baselines with YOLO ALGORITHMS
+<!--
+./gen_html_table.py --config 'COCO-InstanceSegmentation/mask*50*'{1x,3x}'*' 'COCO-InstanceSegmentation/mask*101*' --name R50-C4 R50-DC5 R50-FPN R50-C4 R50-DC5 R50-FPN R101-C4 R101-DC5 R101-FPN X101-FPN --fields lr_sched train_speed inference_speed mem box_AP mask_AP
+-->
+
+
+
+<table><tbody>
+<!-- START TABLE -->
+<!-- TABLE HEADER -->
+<th valign="bottom">Name</th>
+<th valign="bottom">lr<br/>sched</th>
+<th valign="bottom">train<br/>time<br/>(s/iter)</th>
+<th valign="bottom">inference<br/>time<br/>(s/im)</th>
+<th valign="bottom">train<br/>mem<br/>(GB)</th>
+<th valign="bottom">box<br/>AP</th>
+<th valign="bottom">mask<br/>AP</th>
+<th valign="bottom">model id</th>
+<th valign="bottom">download</th>
+<!-- TABLE BODY -->
+
+ <tr><td align="left"><a href="">YOLOV8</a></td>
+<td align="center">yolov8n</td>
+<td align="center">0.690</td>
+<td align="center">0.103</td>
+<td align="center">7.2</td>
+<td align="center">93.5</td>
+<td align="center">90.1</td>
+<td align="center">139653917</td>
+<td align="center"><a href="https://dl.fbaipublicfiles.com/detectron2/COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x/139653917/model_final_2d9806.pkl">model</a>&nbsp;|&nbsp;<a href="https://dl.fbaipublicfiles.com/detectron2/COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x/139653917/metrics.json">metrics</a></td>
+</tr>
+
 </tbody></table>
 
 
