@@ -486,22 +486,12 @@ All models available for download through this document are licensed under the
 <td align="center">0.34</td>
 <td align="center">0.145</td>
 <td align="center">5.2</td>
-<td align="center">66.80</td>
-<td align="center">67.84</td>
+<td align="center">65.85</td>
+<td align="center">68.64</td>
 <td align="center">137849600</td>
 <td align="center"><a href="https://drive.google.com/file/d/1-9z_F9e8e9jWWlQGeFNFEJm0zR0dDqTy/view?usp=drive_link">model</a>&nbsp;|&nbsp;<a href="https://drive.google.com/file/d/1-6bbFLY6A_dfcDVwa681x9sycvNG2l7O/view?usp=drive_link">metrics</a></td>
 </tr>
 
- <!-- <tr><td align="left"><a href="">YOLOV8</a></td>
-<td align="center">3x</td>
-<td align="center">0.34</td>
-<td align="center">0.145</td>
-<td align="center">5.2</td>
-<td align="center">66.80</td>
-<td align="center">67.84</td>
-<td align="center">137849600</td>
-<td align="center"><a href="https://drive.google.com/file/d/1-9z_F9e8e9jWWlQGeFNFEJm0zR0dDqTy/view?usp=drive_link">model</a>&nbsp;|&nbsp;<a href="https://drive.google.com/file/d/1-6bbFLY6A_dfcDVwa681x9sycvNG2l7O/view?usp=drive_link">metrics</a></td> -->
-<!-- </tr> -->
 </tbody></table>
 
 
@@ -516,7 +506,7 @@ All models available for download through this document are licensed under the
 <!-- START TABLE -->
 <!-- TABLE HEADER -->
 <th valign="bottom">Name</th>
-<th valign="bottom">lr<br/>sched</th>
+<th valign="bottom">base<br/>model</th>
 <th valign="bottom">train<br/>time<br/>(s/iter)</th>
 <th valign="bottom">inference<br/>time<br/>(s/im)</th>
 <th valign="bottom">train<br/>mem<br/>(GB)</th>
@@ -526,13 +516,36 @@ All models available for download through this document are licensed under the
 <th valign="bottom">download</th>
 <!-- TABLE BODY -->
 
- <tr><td align="left"><a href="">YOLOV8</a></td>
+ <tr><td align="left"><a href="">YOLOV8 </a></td>
 <td align="center">yolov8n</td>
 <td align="center">0.690</td>
 <td align="center">0.103</td>
 <td align="center">7.2</td>
-<td align="center">93.5</td>
-<td align="center">90.1</td>
+<td align="center">92.5</td>
+<td align="center">92.9</td>
+<td align="center">139653917</td>
+<td align="center"><a href="https://dl.fbaipublicfiles.com/detectron2/COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x/139653917/model_final_2d9806.pkl">model</a>&nbsp;|&nbsp;<a href="https://dl.fbaipublicfiles.com/detectron2/COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x/139653917/metrics.json">metrics</a></td>
+</tr>
+
+
+<tr><td align="left"><a href="">YOLOV8 </a></td>
+<td align="center">yolov8m</td>
+<td align="center">0.690</td>
+<td align="center">0.103</td>
+<td align="center">7.5</td>
+<td align="center">92.1</td>
+<td align="center">94.3</td>
+<td align="center">139653917</td>
+<td align="center"><a href="https://dl.fbaipublicfiles.com/detectron2/COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x/139653917/model_final_2d9806.pkl">model</a>&nbsp;|&nbsp;<a href="https://dl.fbaipublicfiles.com/detectron2/COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x/139653917/metrics.json">metrics</a></td>
+</tr>
+
+ <tr><td align="left"><a href="">YOLONAS + SAM</a></td>
+<td align="center">yolonas</td>
+<td align="center">0.690</td>
+<td align="center">0.103</td>
+<td align="center">12.8</td>
+<td align="center">93.33</td>
+<td align="center">None</td>
 <td align="center">139653917</td>
 <td align="center"><a href="https://dl.fbaipublicfiles.com/detectron2/COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x/139653917/model_final_2d9806.pkl">model</a>&nbsp;|&nbsp;<a href="https://dl.fbaipublicfiles.com/detectron2/COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x/139653917/metrics.json">metrics</a></td>
 </tr>
