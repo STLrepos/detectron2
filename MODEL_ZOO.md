@@ -544,7 +544,7 @@ notebook & model yolov8 <a href="https://drive.google.com/drive/folders/16QOayEH
 
  <tr><td align="left"><a href="">YOLONAS + SAM</a></td>
 <td align="center">yolonas</td>
-<td align="center">0.690</td>
+<!-- <td align="center">0.690</td> -->
 <td align="center">0.103</td>
 <td align="center">12.8</td>
 <td align="center">93.33</td>
