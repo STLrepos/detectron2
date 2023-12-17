@@ -441,13 +441,13 @@ All models available for download through this document are licensed under the
 ./gen_html_table.py --config 'COCO-InstanceSegmentation/mask*50*'{1x,3x}'*' 'COCO-InstanceSegmentation/mask*101*' --name R50-C4 R50-DC5 R50-FPN R50-C4 R50-DC5 R50-FPN R101-C4 R101-DC5 R101-FPN X101-FPN --fields lr_sched train_speed inference_speed mem box_AP mask_AP
 -->
 
-
+checkpoint & notebook <a href="https://drive.google.com/drive/folders/1lsJ2lf-n5HYMU9n661qKoViLejVZmMP_?usp=drive_link">here</a>
 
 <table><tbody>
 <!-- START TABLE -->
 <!-- TABLE HEADER -->
 <th valign="bottom">Name</th>
-<th valign="bottom">backdone<br/>sched</th>
+<th valign="bottom">configs<br/>model</th>
 <th valign="bottom">train<br/>time<br/>(s/iter)</th>
 <th valign="bottom">inference<br/>time<br/>(s/im)</th>
 <th valign="bottom">train<br/>mem<br/>(GB)</th>
@@ -458,7 +458,7 @@ All models available for download through this document are licensed under the
 <!-- TABLE BODY -->
 
 <tr><td align="left"><a href="configs/COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_1x.yaml">R50-FPN</a></td>
-<td align="center">1x</td>
+<td align="center">base: R50_1x</td>
 <td align="center">0.261</td>
 <td align="center">0.022</td>
 <td align="center">4.2</td>
@@ -470,7 +470,7 @@ All models available for download through this document are licensed under the
 
 <!-- ROW: mask_rcnn_R_50_FPN_3x -->
  <tr><td align="left"><a href="configs/COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml">R50-FPN</a></td>
-<td align="center">3x</td>
+<td align="center">base: R50_3x</td>
 <td align="center">0.261</td>
 <td align="center">0.022</td>
 <td align="center">4.2</td>
@@ -482,7 +482,7 @@ All models available for download through this document are licensed under the
 
 <!-- ROW: mask_rcnn_R_101_FPN_3x -->
  <tr><td align="left"><a href="configs/COCO-InstanceSegmentation/mask_rcnn_R_101_FPN_3x.yaml">R101-FPN</a></td>
-<td align="center">3x</td>
+<td align="center">base: R101<br>epochs: 36</td>
 <td align="center">0.34</td>
 <td align="center">0.145</td>
 <td align="center">5.2</td>
