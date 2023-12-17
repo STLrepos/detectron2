@@ -499,45 +499,48 @@ All models available for download through this document are licensed under the
 <!--
 ./gen_html_table.py --config 'COCO-InstanceSegmentation/mask*50*'{1x,3x}'*' 'COCO-InstanceSegmentation/mask*101*' --name R50-C4 R50-DC5 R50-FPN R50-C4 R50-DC5 R50-FPN R101-C4 R101-DC5 R101-FPN X101-FPN --fields lr_sched train_speed inference_speed mem box_AP mask_AP
 -->
-
+notebook & model yolov8 <a href="https://drive.google.com/drive/folders/16QOayEHp6g9BZiwV9TPc_yRiLhiA4B8P?usp=drive_link">here</a>
 
 
 <table><tbody>
 <!-- START TABLE -->
 <!-- TABLE HEADER -->
 <th valign="bottom">Name</th>
-<th valign="bottom">base<br/>model</th>
-<th valign="bottom">train<br/>time<br/>(s/iter)</th>
+<th valign="bottom">configs<br/>model</th>
+<!-- <th valign="bottom">train<br/>time<br/>(s/iter)</th> -->
 <th valign="bottom">inference<br/>time<br/>(s/im)</th>
 <th valign="bottom">train<br/>mem<br/>(GB)</th>
-<th valign="bottom">box<br/>AP</th>
-<th valign="bottom">mask<br/>AP</th>
-<th valign="bottom">model id</th>
-<th valign="bottom">download</th>
+<th valign="bottom">mask<br>mAP</th>
+<th valign="bottom">mask<br>mAP50</th>
+<th valign="bottom">box<br>mAP</th>
+<th valign="bottom">box<br>mAP50</th>
+<!-- <th valign="bottom">model&amp;notebook</th> -->
 <!-- TABLE BODY -->
 
  <tr><td align="left"><a href="">YOLOV8 </a></td>
-<td align="center">yolov8n</td>
-<td align="center">0.690</td>
-<td align="center">0.103</td>
-<td align="center">7.2</td>
-<td align="center">92.5</td>
-<td align="center">92.9</td>
-<td align="center">139653917</td>
-<td align="center"><a href="https://dl.fbaipublicfiles.com/detectron2/COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x/139653917/model_final_2d9806.pkl">model</a>&nbsp;|&nbsp;<a href="https://dl.fbaipublicfiles.com/detectron2/COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x/139653917/metrics.json">metrics</a></td>
-</tr>
+<td align="center">base: yolov8m<br>
+                  epochs: 36<br>
+                  img_size:800</td>
+
+<td align="center">31.4ms</td>
+<td align="center"></td>
+<td align="center">65.2</td>
+<td align="center">86.9</td>
+<td align="center">71.6</td>
+<td align="center">86.8</td>
 
 
 <tr><td align="left"><a href="">YOLOV8 </a></td>
-<td align="center">yolov8m</td>
-<td align="center">0.690</td>
-<td align="center">0.103</td>
-<td align="center">7.5</td>
-<td align="center">92.1</td>
-<td align="center">94.3</td>
-<td align="center">139653917</td>
-<td align="center"><a href="https://dl.fbaipublicfiles.com/detectron2/COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x/139653917/model_final_2d9806.pkl">model</a>&nbsp;|&nbsp;<a href="https://dl.fbaipublicfiles.com/detectron2/COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x/139653917/metrics.json">metrics</a></td>
-</tr>
+<td align="center">base: yolov8n<br>
+                  epochs: 36<br>
+                  img_size:800</td>
+
+<td align="center">11.3ms</td>
+<td align="center"></td>
+<td align="center">68.9</td>
+<td align="center">93.7</td>
+<td align="center">73.7</td>
+<td align="center">93.3</td>
 
  <tr><td align="left"><a href="">YOLONAS + SAM</a></td>
 <td align="center">yolonas</td>
@@ -547,8 +550,6 @@ All models available for download through this document are licensed under the
 <td align="center">93.33</td>
 <td align="center">None</td>
 <td align="center">139653917</td>
-<td align="center"><a href="https://dl.fbaipublicfiles.com/detectron2/COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x/139653917/model_final_2d9806.pkl">model</a>&nbsp;|&nbsp;<a href="https://dl.fbaipublicfiles.com/detectron2/COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x/139653917/metrics.json">metrics</a></td>
-</tr>
 
 </tbody></table>
 
