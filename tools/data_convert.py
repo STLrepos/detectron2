@@ -176,16 +176,16 @@ def convert_jb_to_coco_json(image_folder, masks_folder, coco_json_file):
                     "bbox": [int(x), int(y), int(w), int(h)],
                     "bbox_mode": "BoxMode.XYWH_ABS",
                     "segmentation": encoded_mask,
-                    "category_id": int(lb_idx),
+                    "category_id": int(lb_idx)-1, 
                     "image_id": imid,
                     "id": ann_id
                 }
                 objs.append(obj)
-        coco_json['annotations'].append(objs)
+        coco_json['annotations'].extend(objs)
 
     # add the categories
-    coco_json['categories'].append({'id': 0, 'name': 'bg', 'supercategory': 'background'})
-    coco_json['categories'].append({'id': 1, 'name': 'fg', 'supercategory': 'foreground'})
+    # coco_json['categories'].append({'id': 0, 'name': 'bg', 'supercategory': 'background'}) # no cat id for background
+    coco_json['categories'].append({'id': 0, 'name': 'fg', 'supercategory': 'foreground'})
 
     # save the json file
     with open(coco_json_file, 'w') as f:
